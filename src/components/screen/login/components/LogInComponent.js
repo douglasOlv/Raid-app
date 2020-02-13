@@ -114,18 +114,20 @@ const HandleFormValidation = withFormik({
       .then(response => {
         setSubmitting(false);
         const { Token } = response.data;
-        persistItemInStorage('Token', Token).then(console.log('Token salvo'));
-        props.navigation.navigate('MainStack');
+        persistItemInStorage('Token', Token)
+          .then(props.navigation.navigate('MainStack'))
+          .catch(error => console.log(error));
       })
       .catch(erro => {
         setSubmitting(false);
-        let message = Object.values(erro.response.data.message);
-        let cont = message.indexOf('email');
-        cont >= 0
+        let { uidField } = erro.response.data.message;
+        console.log(uidField);
+
+        uidField === 'email'
           ? setErrors({
-              message: ' > Não foi encontrado usuário com esse email'
+              message: ' Não foi encontrado usuário com esse email'
             })
-          : setErrors({ message: ' > Senha Incoreta' });
+          : setErrors({ message: ' Senha Incoreta' });
       });
   }
 })(LoginInComponent);

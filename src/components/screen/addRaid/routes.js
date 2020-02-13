@@ -1,4 +1,5 @@
 import { createStackNavigator } from 'react-navigation-stack';
+import ThreeDotsMenu from '~/utils/ThreeDotsMenu';
 import appStyles from '~/styles';
 import AddRaid from './index';
 
@@ -8,7 +9,8 @@ const AddRaidStack = createStackNavigator(
       screen: AddRaid,
       navigationOptions: {
         headerTitleAlign: 'center',
-        title: 'Criar Raid'
+        title: 'Nova Raid',
+        headerRight: ThreeDotsMenu
       }
     }
   },

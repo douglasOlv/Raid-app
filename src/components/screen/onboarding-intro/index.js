@@ -14,7 +14,6 @@ export default class Onboarding_Intro extends Component {
     });
 
     getItemFromStorage('Token').then(response => {
-      console.log(response);
       response !== undefined
         ? this.props.navigation.navigate('MainStack')
         : this.props.navigation.navigate('Login');

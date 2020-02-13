@@ -39,7 +39,6 @@ function MyDatePicker(props) {
         locale: ptBR
       });
     }
-    console.log(date);
     var year = date.split('-')[0];
     var month = date.split('-')[1];
     var day = date.split('-')[2].split(' ')[0];
