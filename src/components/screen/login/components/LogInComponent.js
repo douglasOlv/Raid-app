@@ -17,33 +17,27 @@ import appStyles from '~/styles';
 const LoginInComponent = props => (
   <View style={style.container}>
     <View style={style.formWrapper}>
-      {props.errors.login && (
-        <Text style={style.notification}>{props.errors.login}</Text>
-      )}
       {props.errors.message && (
         <Text style={style.notification}>{props.errors.message}</Text>
       )}
 
       <InputCommun
         style={style.customInput}
-        placeholder='E-mail'
+        label={props.errors.login ? props.errors.login : 'E-mail'}
         keyboardType='email-address'
         autoCapitalize='none'
         autoCorrect={false}
         value={props.values.login}
-        onChangeText={text => props.setFieldValue('login', text)}
+        setValue={text => props.setFieldValue('login', text)}
       />
-      {props.errors.passwdLogin && (
-        <Text style={style.notification}>{props.errors.passwdLogin}</Text>
-      )}
       <InputCommun
         style={style.customInput}
-        placeholder='Senha'
+        label={props.errors.passwdLogin ? props.errors.passwdLogin : 'Senha'}
         secureTextEntry={true}
         autoCapitalize='none'
         autoCorrect={false}
         value={props.values.passwdLogin}
-        onChangeText={text => props.setFieldValue('passwdLogin', text)}
+        setValue={text => props.setFieldValue('passwdLogin', text)}
       />
       <TouchableOpacity onPress={props.handleSubmit} style={style.button}>
         {props.isSubmitting && <ActivityIndicator />}
@@ -72,7 +66,7 @@ const style = StyleSheet.create({
   },
   button: {
     height: appStyles.metrics.getHeightFromDP('7%'),
-    marginTop: appStyles.metrics.getHeightFromDP('2%'),
+    marginTop: appStyles.metrics.getHeightFromDP('5%'),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: appStyles.colors.yellow,
@@ -99,13 +93,15 @@ const HandleFormValidation = withFormik({
 
   validationSchema: Yup.object().shape({
     login: Yup.string()
-      .required('Campo vazio')
-      .email('Campo Invalido, digite um email'),
-    passwdLogin: Yup.string().required('Campo vazio')
+      .required('Digite um e-mail')
+      .email('Digite um e-mail valido'),
+    passwdLogin: Yup.string().required('Digite uma senha')
   }),
   validateOnChange: false,
 
   handleSubmit: (values, { setErrors, setSubmitting, props }) => {
+    persistItemInStorage('email', values.login).then();
+    persistItemInStorage('password', values.passwdLogin).then();
     api
       .post('login', {
         email: values.login,

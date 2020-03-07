@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import {
   View,
+  Text,
   KeyboardAvoidingView,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Animated
+  Animated,
+  Keyboard
 } from 'react-native';
 import LogInComponent from './components/LogInComponent';
 import SignUpComponent from './components/SignUpComponent';
@@ -19,8 +21,18 @@ const LAYOUTS = [
 ];
 
 class Login extends Component {
+  state = { keyboardShow: false };
   _loginFontSize: Object = new Animated.Value(1);
   _signUpFontSize: Object = new Animated.Value(0);
+
+  componentDidMount() {
+    Keyboard.addListener('keyboardDidShow', () => {
+      this.setState({ keyboardShow: true });
+    });
+    Keyboard.addListener('keyboardDidHide', () => {
+      this.setState({ keyboardShow: false });
+    });
+  }
 
   swipeLogin = () => {
     Animated.parallel([
@@ -67,13 +79,7 @@ class Login extends Component {
     const { Layout } = item;
 
     return (
-      <View
-        style={{
-          flex: 1,
-          width: appStyles.metrics.width,
-          height: appStyles.metrics.getHeightFromDP('80')
-        }}
-      >
+      <View style={style.formWrapper}>
         <Layout />
       </View>
     );
@@ -82,6 +88,11 @@ class Login extends Component {
   render() {
     return (
       <KeyboardAvoidingView behavior='padding' style={style.container}>
+        {!this.state.keyboardShow && (
+          <View style={{ alignItems: 'center' }}>
+            <Text style={style.appName}>RaidsApp</Text>
+          </View>
+        )}
         <View style={style.wrapper}>
           <View style={style.wrapperButonNav}>
             <TouchableOpacity onPress={this.swipeLogin}>
@@ -94,7 +105,7 @@ class Login extends Component {
                   color: this._loginFontSize.interpolate({
                     inputRange: [0, 1],
                     outputRange: [
-                      appStyles.colors.gray,
+                      appStyles.colors.lightGray,
                       appStyles.colors.defaultWhite
                     ],
                     extrapolate: 'clamp'
@@ -122,7 +133,7 @@ class Login extends Component {
                   color: this._signUpFontSize.interpolate({
                     inputRange: [0, 1],
                     outputRange: [
-                      appStyles.colors.gray,
+                      appStyles.colors.lightGray,
                       appStyles.colors.defaultWhite
                     ],
                     extrapolate: 'clamp'
@@ -150,26 +161,36 @@ class Login extends Component {
 
 const style = StyleSheet.create({
   container: {
+    paddingTop: appStyles.metrics.getHeightFromDP('8'),
+    justifyContent: 'space-evenly',
     flex: 1,
-    justifyContent: 'flex-end',
     backgroundColor: appStyles.colors.primaryColor
   },
   wrapperButonNav: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: appStyles.metrics.getWidthFromDP('100'),
-    height: appStyles.metrics.getHeightFromDP('8'),
+    width: appStyles.metrics.getWidthFromDP('100%'),
+    height: appStyles.metrics.getHeightFromDP('8%'),
     paddingHorizontal: 2 * appStyles.metrics.extraLargeSize,
-    marginTop: appStyles.metrics.getHeightFromDP('20')
+    marginTop: appStyles.metrics.getHeightFromDP('5%')
   },
   wrapper: {
-    marginTop: appStyles.metrics.mediumSize,
     justifyContent: 'center',
     alignItems: 'center'
   },
   formWrapper: {
-    width: styles.metrics.getWidthFromDP('92%')
+    width: appStyles.metrics.width,
+    height: appStyles.metrics.getHeightFromDP('70')
+  },
+  appName: {
+    color: styles.colors.yellow,
+    marginBottom: 30,
+    fontFamily: 'CircularStd-Black',
+    fontSize: 25,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10
   }
 });
 

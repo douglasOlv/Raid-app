@@ -5,10 +5,11 @@ import {
   TextInput,
   Animated,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  Keyboard
 } from 'react-native';
 import _ from 'lodash';
-import { contains } from '~/utils/functions';
+import { set } from 'date-fns';
 
 export default function TextInputSearch(props) {
   const [data, setData] = useState(props.data);
@@ -43,10 +44,17 @@ export default function TextInputSearch(props) {
     })
   };
 
+  function contains({ name }, query) {
+    if (name.includes(query) && query !== '') {
+      return true;
+    }
+    return false;
+  }
+
   function handleSearch(textValue) {
     textValue == '' ? setHaveText(false) : setHaveText(true);
     setDisplay(textValue);
-    const formatedQuery = display.toUpperCase();
+    const formatedQuery = textValue.toUpperCase();
     const filtredData = _.filter(props.data, item =>
       contains(item, formatedQuery)
     );
@@ -78,17 +86,17 @@ export default function TextInputSearch(props) {
           onFocus={() => {
             setIsFocused(true);
             setDisplay('');
+            setHaveText(false);
             setData(props.data);
-            setShowFlatlist(true);
           }}
           onBlur={() => {
             handleBlur();
           }}
           value={display}
           onChangeText={textValue => {
+            setShowFlatlist(true);
             handleSearch(textValue);
           }}
-          blurOnSubmit
         />
       </View>
       {showFlatList && (
@@ -98,7 +106,7 @@ export default function TextInputSearch(props) {
             zIndex: 2,
             top: 70,
             maxHeight: 290,
-            backgroundColor: 'gray',
+            backgroundColor: '#adadad',
             borderRadius: 5
           }}
         >

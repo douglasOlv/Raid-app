@@ -35,7 +35,7 @@ const style = StyleSheet.create({
     height: appStyles.metrics.getHeightFromDP('54'),
     justifyContent: 'space-between',
     marginBottom: appStyles.metrics.navigationHeaderHeight * 1.7,
-    marginHorizontal: appStyles.metrics.getWidthFromDP('5'),
+    marginHorizontal: appStyles.metrics.getWidthFromDP('5%'),
     backgroundColor: appStyles.colors.transparentGrayx,
     paddingHorizontal: 15,
     paddingVertical: 15,
@@ -53,10 +53,7 @@ const style = StyleSheet.create({
   }
 });
 
-const NewRaid = props => {
-  // const gym = props.navigation.getParam('gym');
-
-  // props.values.gym_id = gym.id;
+function NewRaid(props) {
   const [gym, setGym] = useState();
   useEffect(() => {
     getItemFromStorage('Token')
@@ -91,6 +88,7 @@ const NewRaid = props => {
             setValue={text => props.setFieldValue('gym_id', text)}
           />
           <DateTimePicker
+            label='Data'
             value={props.values.raid_time}
             onChange={text => props.setFieldValue('raid_time', text)}
           />
@@ -113,7 +111,7 @@ const NewRaid = props => {
       </View>
     </KeyboardAvoidingView>
   );
-};
+}
 NewRaid.navigationOptions = () => ({});
 
 export default withFormik({
@@ -121,7 +119,7 @@ export default withFormik({
     gym_id: '',
     raid_lv: '',
     pokemon: '',
-    raid_time: new Date()
+    raid_time: ''
   }),
 
   validationSchema: Yup.object().shape({
@@ -130,7 +128,7 @@ export default withFormik({
     raid_time: Yup.string().required('Horario não pode ser vazio')
   }),
   validateOnChange: false,
-  handleSubmit: (values, { setSubmitting }) => {
+  handleSubmit: (values, { setSubmitting, resetForm }) => {
     const { gym_id, pokemon, raid_lv, raid_time } = values;
 
     getItemFromStorage('Token')
@@ -150,6 +148,7 @@ export default withFormik({
           .then(({ data }) => {
             alert('Raid criada com Sucesso');
             setSubmitting(false);
+            console.log(data);
           })
           .catch(erro => {
             console.log(erro);

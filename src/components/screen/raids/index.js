@@ -12,11 +12,16 @@ import { ptBR } from 'date-fns/locale';
 import api from '~/service/api';
 import { getItemFromStorage } from '~/utils/useAsyncStorage';
 
+import { Feather } from '@expo/vector-icons';
+
 import appStyles from '~/styles';
 
 export default function Raids(props) {
   const [feed, setFeed] = useState([]);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [statusRefresh, setStatusRefresh] = useState(false);
+  const [showUsers, setSHowUsers] = useState(false);
+  const [isPartaker, setIsPartaker] = useState(false);
 
   useEffect(() => {
     getItemFromStorage('Token').then(token => {
@@ -27,37 +32,39 @@ export default function Raids(props) {
           }
         })
         .then(({ data }) => {
-          data.reverse();
           setFeed(data);
+          setStatusRefresh(false);
         })
         .catch(erro => {
           console.log(erro);
           props.navigation.navigate('Login');
         });
     });
-  }, [refresh]);
+  }, [refresh, isPartaker]);
 
-  const renderRaidItemlist = ({ item }) => {
+  const renderItemFeed = ({ item }) => {
+    const { raid_lv, pokemon, raid_time, id, users } = item;
     const handleDisplayDate = date => {
       var dateFormated = formatRelative(parseISO(date), new Date(), {
         locale: ptBR
       });
       return dateFormated;
     };
+
     return (
       <View style={style.feedItem}>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate('Details');
+            props.navigation.navigate('Details', { id, users });
           }}
         >
           <View style={style.feedItemLvl}>
-            <Text style={style.itemLvlText}>{item.raid_lv}</Text>
+            <Text style={style.itemLvlText}>{raid_lv}</Text>
           </View>
           <View style={style.bodyFeedItem}>
-            <Text style={style.feedNameText}>{item.pokemon}</Text>
-            <Text>{handleDisplayDate(item.raid_time)}</Text>
-            <Text>{item.raid_time}</Text>
+            <Text style={style.feedNameText}>{pokemon}</Text>
+            <Text>{handleDisplayDate(raid_time)}</Text>
+            <Text>{raid_time}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -69,12 +76,13 @@ export default function Raids(props) {
       <FlatList
         data={feed}
         extraData
-        renderItem={renderRaidItemlist}
-        keyExtractor={item => `${item.id}`}
+        renderItem={renderItemFeed}
+        keyExtractor={item => item.id.toString()}
         invertStickyHeaders
-        refreshing={false}
+        refreshing={statusRefresh}
         onRefresh={() => {
-          refresh === false ? setRefresh(true) : setRefresh(false);
+          setStatusRefresh(true);
+          refresh === 0 ? setRefresh(1) : setRefresh(0);
         }}
       />
     </View>
@@ -90,11 +98,11 @@ const style = StyleSheet.create({
   },
   feedItem: {
     minHeight: appStyles.metrics.getHeightFromDP('12'),
+    zIndex: 1,
     marginHorizontal: 10,
     marginVertical: 5,
     backgroundColor: appStyles.colors.defaultWhite,
     borderRadius: appStyles.metrics.smallSize,
-    paddingLeft: appStyles.metrics.getWidthFromDP('4'),
     elevation: 4,
     shadowOffset: { width: 5, height: 5 },
     shadowColor: 'grey',
@@ -107,7 +115,7 @@ const style = StyleSheet.create({
     right: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: appStyles.colors.lightGray,
+    backgroundColor: appStyles.colors.lightingDarkLayer,
     height: appStyles.metrics.getWidthFromDP('8'),
     width: appStyles.metrics.getWidthFromDP('8'),
     borderRadius: appStyles.metrics.getWidthFromDP('5')
@@ -126,5 +134,9 @@ const style = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'CircularStd-Black',
     color: appStyles.colors.darkText
+  },
+  nameListPartaker: {
+    textTransform: 'capitalize',
+    marginLeft: 30
   }
 });

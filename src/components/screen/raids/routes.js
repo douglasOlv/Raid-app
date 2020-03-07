@@ -1,9 +1,8 @@
 import { createStackNavigator } from 'react-navigation-stack';
-import headerUtils from '~/routes/headerUtils';
+
 import appStyles from '~/styles';
 import Raids from '.';
 import Details from './components/Details';
-import { TransitioningView } from 'react-native-reanimated';
 
 const RootStack = createStackNavigator(
   {

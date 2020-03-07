@@ -4,13 +4,23 @@ import ForgotPasswd from './components/forgotPasswd';
 
 const LoginStack = createStackNavigator(
   {
-    Login,
+    Login: {
+      screen: Login,
+      navigationOptions: {
+        title: '',
+        headerTransparent: true
+      }
+    },
 
-    ForgotPasswd
+    ForgotPasswd: {
+      screen: ForgotPasswd,
+      navigationOptions: {
+        title: '',
+        headerTransparent: true
+      }
+    }
   },
-  {
-    headerMode: 'none'
-  }
+  {}
 );
 
 export default LoginStack;

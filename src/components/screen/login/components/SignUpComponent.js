@@ -15,59 +15,57 @@ import appStyles from '~/styles';
 
 const SignUpComponent = props => (
   <View style={style.container}>
-    {props.errors.username && (
-      <Text style={style.notification}>{props.errors.username}</Text>
-    )}
+    <View>
+      <InputCommun
+        style={style.customInput}
+        label={
+          props.errors.username ? props.errors.username : 'Nome de Usuário'
+        }
+        keyboardType='default'
+        autoCapitalize='none'
+        autoCorrect={false}
+        value={props.values.username}
+        setValue={text => props.setFieldValue('username', text)}
+      />
 
-    <InputCommun
-      style={style.customInput}
-      placeholder='Nome de Usuário'
-      keyboardType='default'
-      autoCapitalize='none'
-      autoCorrect={false}
-      value={props.values.username}
-      onChangeText={text => props.setFieldValue('username', text)}
-    />
-    {props.errors.email && (
-      <Text style={style.notification}>{props.errors.email}</Text>
-    )}
-    <InputCommun
-      style={style.customInput}
-      placeholder='E-mail'
-      keyboardType='email-address'
-      autoCapitalize='none'
-      autoCorrect={false}
-      value={props.values.email}
-      onChangeText={text => props.setFieldValue('email', text)}
-    />
-    {props.errors.passwd && (
-      <Text style={style.notification}>{props.errors.passwd}</Text>
-    )}
-    <InputCommun
-      style={style.customInput}
-      placeholder='Senha'
-      secureTextEntry={true}
-      autoCapitalize='none'
-      autoCorrect={false}
-      value={props.values.passwd}
-      onChangeText={text => props.setFieldValue('passwd', text)}
-    />
-    {props.errors.passwdConfirmation && (
-      <Text style={style.notification}>{props.errors.passwdConfirmation}</Text>
-    )}
-    <InputCommun
-      style={style.customInput}
-      placeholder='Confirme a senha'
-      secureTextEntry={true}
-      autoCapitalize='none'
-      autoCorrect={false}
-      value={props.values.passwdConfirmation}
-      onChangeText={text => props.setFieldValue('passwdConfirmation', text)}
-    />
-    <TouchableOpacity onPress={props.handleSubmit} style={style.button}>
-      {props.isSubmitting && <ActivityIndicator />}
-      {!props.isSubmitting && <Text>Cadastrar Usuário</Text>}
-    </TouchableOpacity>
+      <InputCommun
+        style={style.customInput}
+        label={props.errors.email ? props.errors.email : 'E-mail'}
+        keyboardType='email-address'
+        autoCapitalize='none'
+        autoCorrect={false}
+        value={props.values.email}
+        setValue={text => props.setFieldValue('email', text)}
+      />
+
+      <InputCommun
+        style={style.customInput}
+        label={props.errors.passwd ? props.errors.passwd : 'Senha'}
+        secureTextEntry={true}
+        autoCapitalize='none'
+        autoCorrect={false}
+        value={props.values.passwd}
+        setValue={text => props.setFieldValue('passwd', text)}
+      />
+
+      <InputCommun
+        style={style.customInput}
+        label={
+          props.errors.passwdConfirmation
+            ? props.errors.passwdConfirmation
+            : 'Confirme a senha'
+        }
+        secureTextEntry={true}
+        autoCapitalize='none'
+        autoCorrect={false}
+        value={props.values.passwdConfirmation}
+        setValue={text => props.setFieldValue('passwdConfirmation', text)}
+      />
+      <TouchableOpacity onPress={props.handleSubmit} style={style.button}>
+        {props.isSubmitting && <ActivityIndicator />}
+        {!props.isSubmitting && <Text>Cadastrar Usuário</Text>}
+      </TouchableOpacity>
+    </View>
     <View style={style.notificationWrapper}>
       {props.errors.message && (
         <Text style={style.notification}>{props.errors.message}</Text>
@@ -81,13 +79,13 @@ const style = StyleSheet.create({
     flex: 1,
     marginTop: appStyles.metrics.extraLargeSize,
     width: appStyles.metrics.getWidthFromDP('90'),
-    marginHorizontal: appStyles.metrics.getWidthFromDP('5'),
+    marginHorizontal: appStyles.metrics.getWidthFromDP('5%'),
     justifyContent: 'flex-start'
   },
 
   button: {
     height: appStyles.metrics.getHeightFromDP('7%'),
-    marginTop: appStyles.metrics.getHeightFromDP('2%'),
+    marginTop: appStyles.metrics.getHeightFromDP('5%'),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: appStyles.colors.yellow,
@@ -116,18 +114,16 @@ const handleFormValidation = withFormik({
     message: ''
   }),
   validationSchema: Yup.object().shape({
-    username: Yup.string()
-      .min(3, 'Digite um nome de usuário maior')
-      .required('Campo usuário vazio'),
+    username: Yup.string().required('Digite um nome de usuario'),
     email: Yup.string()
-      .email('O Email digitado é invalido')
+      .email('Digite um e-mail valido')
       .required('Digite um email'),
     passwd: Yup.string()
-      .min(6, 'A senha deve ter no mínimo 6 caracteres')
-      .required('A senha está em branco'),
+      .min(6, 'Digite uma senha com no mínimo 6 caracteres')
+      .required('Digite uma senha'),
     passwdConfirmation: Yup.string()
-      .oneOf([Yup.ref('passwd'), null], 'As senhas não conferem')
-      .required('A senha está em branco')
+      .oneOf([Yup.ref('passwd'), null], 'Repita a senha coretamente')
+      .required('Digite a senha')
   }),
   validateOnChange: false,
 
